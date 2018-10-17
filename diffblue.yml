@@ -1,5 +1,5 @@
-buildCmd: cd jib-core; gradle assemble -x javadoc
-testCmd: cd jib-core; gradle test -x compileJava -x javadoc
+buildCmd: cd jib-core; ./gradlew assemble
+testCmd: cd jib-core; ./gradlew test -x compileJava
 cbmcArguments:
   classpath: '/tools/cbmc/models-simple-overlay.jar:/tools/cbmc/models.jar:.'
   depth: false

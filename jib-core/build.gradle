@@ -21,21 +21,21 @@ repositories {
   mavenCentral()
 }
 
-sourceSets {
-  integrationTest {
-    java {
-      compileClasspath += main.output + test.output
-      runtimeClasspath += main.output + test.output
-      srcDir file('src/integration-test/java')
-    }
-    resources.srcDir file('src/integration-test/resources')
-  }
-}
+// sourceSets {
+//   integrationTest {
+//     java {
+//       compileClasspath += main.output + test.output
+//       runtimeClasspath += main.output + test.output
+//       srcDir file('src/integration-test/java')
+//     }
+//     resources.srcDir file('src/integration-test/resources')
+//   }
+// }
 
-configurations {
-  integrationTestImplementation.extendsFrom testImplementation
-  integrationTestRuntime.extendsFrom testRuntime
-}
+// configurations {
+//   integrationTestImplementation.extendsFrom testImplementation
+//   integrationTestRuntime.extendsFrom testRuntime
+// }
 
 dependencies {
   // Make sure these are consistent with jib-maven-plugin.
@@ -54,27 +54,27 @@ dependencies {
   errorprone 'com.google.errorprone:error_prone_core:2.2.0'
 }
 
-jar {
-  manifest {
-    attributes 'Implementation-Version': version
+// jar {
+//   manifest {
+//     attributes 'Implementation-Version': version
 
-    // OSGi metadata
-    attributes 'Bundle-SymbolicName': 'com.google.cloud.tools.jib'
-    attributes 'Bundle-Name': 'Jib library for building Docker and OCI images'
-    attributes 'Bundle-Vendor': 'Google LLC'
-    attributes 'Bundle-DocURL': 'https://github.com/GoogleContainerTools/jib'
-    attributes 'Bundle-License': 'https://www.apache.org/licenses/LICENSE-2.0'
-    attributes 'Export-Package': 'com.google.cloud.tools.jib.*'
-  }
-}
+//     // OSGi metadata
+//     attributes 'Bundle-SymbolicName': 'com.google.cloud.tools.jib'
+//     attributes 'Bundle-Name': 'Jib library for building Docker and OCI images'
+//     attributes 'Bundle-Vendor': 'Google LLC'
+//     attributes 'Bundle-DocURL': 'https://github.com/GoogleContainerTools/jib'
+//     attributes 'Bundle-License': 'https://www.apache.org/licenses/LICENSE-2.0'
+//     attributes 'Export-Package': 'com.google.cloud.tools.jib.*'
+//   }
+// }
 
-// Integration tests must be run explicitly
-task integrationTest(type: Test) {
-  testClassesDirs = sourceSets.integrationTest.output.classesDirs
-  classpath = sourceSets.integrationTest.runtimeClasspath
-  systemProperty '_JIB_DISABLE_USER_AGENT', true
-}
-integrationTest.dependsOn test
+// // Integration tests must be run explicitly
+// task integrationTest(type: Test) {
+//   testClassesDirs = sourceSets.integrationTest.output.classesDirs
+//   classpath = sourceSets.integrationTest.runtimeClasspath
+//   systemProperty '_JIB_DISABLE_USER_AGENT', true
+// }
+// integrationTest.dependsOn test
 
 test {
   testLogging {
@@ -90,127 +90,127 @@ tasks.withType(JavaCompile) {
   }
 }
 
-// Fail build on javadoc warnings
-tasks.withType(Javadoc) {
-  options.addBooleanOption('Xwerror', true)
-}
-assemble.dependsOn javadoc
+// // Fail build on javadoc warnings
+// tasks.withType(Javadoc) {
+//   options.addBooleanOption('Xwerror', true)
+// }
+// assemble.dependsOn javadoc
 
 tasks.withType(Test) {
   reports.html.setDestination file("${reporting.baseDir}/${name}")
 }
 
-/* GOOGLE JAVA FORMAT */
-googleJavaFormat {
-  toolVersion = '1.6'
-}
-check.dependsOn verifyGoogleJavaFormat
-/* GOOGLE JAVA FORMAT */
+// /* GOOGLE JAVA FORMAT */
+// googleJavaFormat {
+//   toolVersion = '1.6'
+// }
+// check.dependsOn verifyGoogleJavaFormat
+// /* GOOGLE JAVA FORMAT */
 
-/* CHECKSTYLE */
-checkstyle {
-  toolVersion = "7.6.1"
+// /* CHECKSTYLE */
+// checkstyle {
+//   toolVersion = "7.6.1"
 
-  // get the google_checks.xml file from the checkstyle jar and take out the java checks
-  def googleChecks = resources.text.fromArchiveEntry(configurations.checkstyle[0], 'google_checks.xml').asString()
-  def fileExtensionsBefore = '<property name="fileExtensions" value="java, properties, xml"/>'
-  def fileExtensionsAfter = '<property name="fileExtensions" value="properties, xml"/>'
-  def googleChecksNoJava = googleChecks.replace(fileExtensionsBefore, fileExtensionsAfter)
-  assert !googleChecks.equals(googleChecksNoJava)
+//   // get the google_checks.xml file from the checkstyle jar and take out the java checks
+//   def googleChecks = resources.text.fromArchiveEntry(configurations.checkstyle[0], 'google_checks.xml').asString()
+//   def fileExtensionsBefore = '<property name="fileExtensions" value="java, properties, xml"/>'
+//   def fileExtensionsAfter = '<property name="fileExtensions" value="properties, xml"/>'
+//   def googleChecksNoJava = googleChecks.replace(fileExtensionsBefore, fileExtensionsAfter)
+//   assert !googleChecks.equals(googleChecksNoJava)
 
-  config = resources.text.fromString(googleChecksNoJava)
+//   config = resources.text.fromString(googleChecksNoJava)
 
-  maxErrors = 0
-  maxWarnings = 0
-}
-/* CHECKSTYLE */
+//   maxErrors = 0
+//   maxWarnings = 0
+// }
+// /* CHECKSTYLE */
 
-/* RELEASE */
-task sourceJar(type: Jar) {
-  from sourceSets.main.allJava
-  classifier 'sources'
-}
+// /* RELEASE */
+// task sourceJar(type: Jar) {
+//   from sourceSets.main.allJava
+//   classifier 'sources'
+// }
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
-  from javadoc.destinationDir
-  classifier 'javadoc'
-}
+// task javadocJar(type: Jar, dependsOn: javadoc) {
+//   from javadoc.destinationDir
+//   classifier 'javadoc'
+// }
 
-task writePom {
-  project.afterEvaluate {
-    def outputFile = file("${project.buildDir}/pom/${project.name}-${project.version}.pom")
-    outputs.file outputFile
+// task writePom {
+//   project.afterEvaluate {
+//     def outputFile = file("${project.buildDir}/pom/${project.name}-${project.version}.pom")
+//     outputs.file outputFile
 
-    doLast {
-      pom {
-        project {
-          name 'Jib Core'
-          description 'Build container images.'
-          url 'https://github.com/GoogleContainerTools/jib'
-          inceptionYear '2018'
+//     doLast {
+//       pom {
+//         project {
+//           name 'Jib Core'
+//           description 'Build container images.'
+//           url 'https://github.com/GoogleContainerTools/jib'
+//           inceptionYear '2018'
 
-          scm {
-            url 'https://github.com/GoogleContainerTools/jib'
-            connection 'scm:https://github.com/GoogleContainerTools/jib.git'
-            developerConnection 'scm:git://github.com/GoogleContainerTools/jib.git'
-          }
+//           scm {
+//             url 'https://github.com/GoogleContainerTools/jib'
+//             connection 'scm:https://github.com/GoogleContainerTools/jib.git'
+//             developerConnection 'scm:git://github.com/GoogleContainerTools/jib.git'
+//           }
 
-          licenses {
-            license {
-              name 'The Apache Software License, Version 2.0'
-              url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-              distribution 'repo'
-            }
-          }
+//           licenses {
+//             license {
+//               name 'The Apache Software License, Version 2.0'
+//               url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+//               distribution 'repo'
+//             }
+//           }
 
-          developers {
-            developer {
-              id 'coollog'
-              name 'Qingyang Chen'
-              email 'qingyangc@google.com'
-            }
-            developer {
-              id 'loosebazooka'
-              name 'Appu Goundan'
-              email 'appu@google.com'
-            }
-            developer {
-              id 'TadCordle'
-              name 'Tad Cordle'
-              email 'tcordle@google.com'
-            }
-            developer {
-              id 'chanseokoh'
-              name 'Chanseok Oh'
-              email 'chanseok@google.com'
-            }
-            developer {
-              id 'briandealwis'
-              name 'Brian de Alwis'
-              email 'bdealwis@google.com'
-            }
-          }
-        }
-      }.writeTo(outputFile)
-    }
-  }
-}
+//           developers {
+//             developer {
+//               id 'coollog'
+//               name 'Qingyang Chen'
+//               email 'qingyangc@google.com'
+//             }
+//             developer {
+//               id 'loosebazooka'
+//               name 'Appu Goundan'
+//               email 'appu@google.com'
+//             }
+//             developer {
+//               id 'TadCordle'
+//               name 'Tad Cordle'
+//               email 'tcordle@google.com'
+//             }
+//             developer {
+//               id 'chanseokoh'
+//               name 'Chanseok Oh'
+//               email 'chanseok@google.com'
+//             }
+//             developer {
+//               id 'briandealwis'
+//               name 'Brian de Alwis'
+//               email 'bdealwis@google.com'
+//             }
+//           }
+//         }
+//       }.writeTo(outputFile)
+//     }
+//   }
+// }
 
-// For Kokoro sign and releases
-task prepareRelease(type: Copy) {
-  from jar
-  from sourceJar
-  from javadocJar
-  from writePom
-  into "${project.buildDir}/release-artifacts"
-  dependsOn build
-  dependsOn cleanPrepareRelease
-}
-// Release plugin (git release commits and version updates)
-release {
-  tagTemplate = 'v$version-core'
-  git {
-    requireBranch = /^core_release_v\d+.*$/  //regex
-  }
-}
-/* RELEASE */
+// // For Kokoro sign and releases
+// task prepareRelease(type: Copy) {
+//   from jar
+//   from sourceJar
+//   from javadocJar
+//   from writePom
+//   into "${project.buildDir}/release-artifacts"
+//   dependsOn build
+//   dependsOn cleanPrepareRelease
+// }
+// // Release plugin (git release commits and version updates)
+// release {
+//   tagTemplate = 'v$version-core'
+//   git {
+//     requireBranch = /^core_release_v\d+.*$/  //regex
+//   }
+// }
+// /* RELEASE */
