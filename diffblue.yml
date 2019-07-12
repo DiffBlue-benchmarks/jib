@@ -1,4 +1,4 @@
-buildCmd: cd "jib-core"; ./gradlew build -x test
+buildCmd: cd "jib-plugins-common"; ./gradlew build -x test
 testCmd: true
 skipVerification: true
 cbmcArguments:
@@ -176,14 +176,6 @@ phases:
 units:
  - target:
    - dir: build/classes/java/main
-     file: com/google/cloud/tools/jib/api/ImageReference.class
+     file: com/google/cloud/tools/jib/plugins/common/HelpfulSuggestions.class
      sourceDir: src/main/java
-     sourceFile: com/google/cloud/tools/jib/api/ImageReference.java
-   - dir: build/classes/java/main
-     file: com/google/cloud/tools/jib/api/InvalidImageReferenceException.class
-     sourceDir: src/main/java
-     sourceFile: com/google/cloud/tools/jib/api/InvalidImageReferenceException.java
-   - dir: build/classes/java/main
-     file: com/google/cloud/tools/jib/registry/RegistryAliasGroup.class
-     sourceDir: src/main/java
-     sourceFile: com/google/cloud/tools/jib/registry/RegistryAliasGroup.java
+     sourceFile: com/google/cloud/tools/jib/plugins/common/HelpfulSuggestions.java
