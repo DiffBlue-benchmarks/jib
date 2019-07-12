@@ -1,4 +1,4 @@
-buildCmd: cd "./examples/dropwizard"; mvn -e -X -Dlicense.skip=true -Dmaven.enforcer.skip=true  -Denforcer.skip=true -Dair.check.skip-all=true -Dmaven.test.skip=true compile
+buildCmd: cd "jib-core"; ./gradlew build -x test
 testCmd: true
 skipVerification: true
 cbmcArguments:
@@ -173,3 +173,17 @@ phases:
       cover-function-only: false
       # instrument the file as opposed to the function only
       cover-only: file
+units:
+ - target:
+   - dir: build/classes/java/main
+     file: com/google/cloud/tools/jib/api/ImageReference.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/ImageReference.java
+   - dir: build/classes/java/main
+     file: com/google/cloud/tools/jib/api/InvalidImageReferenceException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/InvalidImageReferenceException.java
+   - dir: build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryAliasGroup.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryAliasGroup.java
