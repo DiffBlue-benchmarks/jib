@@ -1,0 +1,2414 @@
+# Copyright 2019 Diffblue Limited. All Rights Reserved.
+cbmcArguments:
+  # Do not generate coverage comments on generated tests.
+  java-generate-no-comments: true
+  # Constrain the size of arrays created in the analyzed code.
+  java-max-vla-length: 100000
+phases:
+  -
+    # Phase 0 PRETTY, SIMPLE and SMART - pretty tests, do not test private methods directly, Smart-Harness
+    timeout: 180
+    cbmcArguments:
+      # Use simple models first containers (ArrayList, HashMap, HashSet,...) will have a maximum size of one.
+      classpath: '/tools/cbmc/models-simple-overlay.jar:/tools/cbmc/models.jar:.'
+      # Set a limit on the number of instructions that can be generated as part of a test trace.
+      depth: 1500
+      # Maximum allowed length for an array passed as test input.
+      max-nondet-array-length: 10
+      # Bound the length of input strings.
+      max-nondet-string-length: 10
+      # Add constraint that strings are printable
+      string-printable: true
+      # Make implicit runtime exceptions explicit.
+      throw-runtime-exceptions: false
+      # Set an upper bound on loop unwinding.
+      unwind: 1
+      # Do not test any methods that have the specified access level.
+      do-not-test-methods-with-access: [private]
+      # Instrument the entry point function only.
+      cover-function-only: false
+      # Instrument the file as opposed to the function only
+      cover-only: file
+      # Set string input value
+      string-input-value: ["foo", "Bar", "BAZ", "1234", "1a 2b 3c", "A1B2C3", "a,b,c", "1", "2", "3", "a/b/c", "a'b'c", ",", "/", "'"]
+      # Instantiate classes using the simplest constructor strategy
+      smart-harness: simplest-constructor-and-nondet
+  -
+    # Phase 1 PRETTY AND COMPLEX - standard models only, pretty tests, do not test private methods directly, input factory
+    timeout: 180
+    cbmcArguments:
+      # Use the standard models library
+      classpath: '/tools/cbmc/models.jar:.'
+      # Set a limit on the number of instructions that can be generated as part of a test trace.
+      depth: false
+      # never initialize reference-typed parameter to the entry point with null
+      java-assume-inputs-non-null: true
+      # Maximum allowed length for an array passed as test input.
+      max-nondet-array-length: 10
+      # Bound the length of input strings.
+      max-nondet-string-length: 10
+      # Add constraint that strings are printable
+      string-printable: true
+      # Set string input value
+      string-input-value: ["foo", "Bar", "BAZ", "1234", "1a 2b 3c", "A1B2C3", "a,b,c", "1", "2", "3", "a/b/c", "a'b'c", ",", "/", "'"]
+      # Make implicit runtime exceptions explicit.
+      throw-runtime-exceptions: false
+      # Set an upper bound on loop unwinding.
+      unwind: 2
+      # Do not test any methods that have the specified access level.
+      do-not-test-methods-with-access: [private]
+      # Instrument the entry point function only.
+      cover-function-only: false
+      # instrument the file as opposed to the function only
+      cover-only: file
+      # Limit input factory recursive depth (default 0 = no recursion allowed)
+      java-test-input-factory-bmc-recursion-limit: 4
+  -
+    # Phase 2 FIFO Strategy - pretty tests, do not test private methods directly, fifo
+    timeout: 100
+    cbmcArguments:
+      # Use the standard models library
+      classpath: '/tools/cbmc/models.jar:.'
+      # Set a limit on the number of instructions that can be generated as part of a test trace.
+      depth: false
+      # never initialize reference-typed parameter to the entry point with null
+      java-assume-inputs-non-null: true
+      # Maximum allowed length for an array passed as test input.
+      max-nondet-array-length: 30
+      # Add constraint that strings are printable
+      max-nondet-string-length: 100
+      # Explores the program tree breadth-first.
+      paths: fifo
+      # Set string input value
+      string-input-value: ["foo", "Bar", "BAZ", "1234", "1a 2b 3c", "A1B2C3", "a,b,c", "1", "2", "3", "a/b/c", "a'b'c", ",", "/", "'"]
+      # Add constraint that strings are printable
+      string-printable: true
+      # Make implicit runtime exceptions explicit.
+      throw-runtime-exceptions: false
+      # Set an upper bound on loop unwinding.
+      unwind: false
+      # Do not test any methods that have the specified access level.
+      do-not-test-methods-with-access: [private]
+      # Instrument the entry point function only.
+      cover-function-only: false
+      # instrument the file as opposed to the function only
+      cover-only: file
+  -
+    # Phase 3 Exceptions - do not test private methods directly
+    timeout: 180
+    cbmcArguments:
+      # Use simple models containers first (ArrayList, HashMap, HashSet,...) will have a maximum size of one.
+      classpath: '/tools/cbmc/models-simple-overlay.jar:/tools/cbmc/models.jar:.'
+      # Set a limit on the number of instructions that can be generated as part of a test trace.
+      depth: false
+      # Maximum allowed length for an array passed as test input.
+      max-nondet-array-length: 30
+      # Bound the length of input strings.
+      max-nondet-string-length: 30
+      # Add constraint that strings are printable
+      string-printable: false
+      # Make implicit runtime exceptions explicit.
+      throw-runtime-exceptions: true
+      # Set an upper bound on loop unwinding.
+      unwind: 3
+      # Do not test any methods that have the specified access level.
+      do-not-test-methods-with-access: [private]
+      # Instrument the entry point function only.
+      cover-function-only: false
+      # instrument the file as opposed to the function only
+      cover-only: file
+  -
+    # Phase 4 Direct testing - test private methods directly, increased reflection
+    timeout: 180
+    cbmcArguments:
+      # Use simple models containers first (ArrayList, HashMap, HashSet,...) will have a maximum size of one.
+      classpath: '/tools/cbmc/models-simple-overlay.jar:/tools/cbmc/models.jar:.'
+      # Set a limit on the number of instructions that can be generated as part of a test trace.
+      depth: 1500
+      # never initialize reference-typed parameter to the entry point with null
+      java-assume-inputs-non-null: true
+      # Maximum allowed length for an array passed as test input.
+      max-nondet-array-length: 10
+      # Bound the length of input strings.
+      max-nondet-string-length: 10
+      # Add constraint that strings are printable
+      string-printable: true
+      # Make implicit runtime exceptions explicit.
+      throw-runtime-exceptions: false
+      # Set an upper bound on loop unwinding.
+      unwind: 1
+      # Set string input value
+      string-input-value: ["foo", "Bar", "BAZ", "1234", "1a 2b 3c", "A1B2C3", "a,b,c", "1", "2", "3", "a/b/c", "a'b'c", ",", "/", "'"]
+      # If the logs contain output of the following then proceed to phase X
+    nextPhase:
+      # If the function is not analysable then do not pass onto the next phase
+      not_analyzed: null
+  -
+    # PHASE 5 Mocking - aggressive mocking, do not test private methods directly
+    timeout: 180
+    cbmcArguments:
+      # Use simple models containers first (ArrayList, HashMap, HashSet,...) will have a maximum size of one.
+      classpath: '/tools/cbmc/models-simple-overlay.jar:/tools/cbmc/models.jar:.'
+      # Set a limit on the number of instructions that can be generated as part of a test trace.
+      depth: 3000
+      # never initialize reference-typed parameter to the entry point with null
+      java-assume-inputs-non-null: true
+      # Only load the class (and related inner/outer classes) containing the method under test,
+      load-containing-class-only: true
+      # Maximum allowed length for an array passed as test input.
+      max-nondet-array-length: 30
+      # Bound the length of input strings.
+      max-nondet-string-length: 100
+      # Add constraint that strings are printable
+      string-printable: false
+      # Make implicit runtime exceptions explicit.
+      throw-runtime-exceptions: true
+      # Set an upper bound on loop unwinding.
+      unwind: 3
+      # Do not test any methods that have the specified access level.
+      do-not-test-methods-with-access: [private]
+      # Instrument the entry point function only.
+      cover-function-only: false
+      # instrument the file as opposed to the function only
+      cover-only: file
+units:
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/JsonToImageTranslator.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/JsonToImageTranslator.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/AbsoluteUnixPath.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/AbsoluteUnixPath.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/Port.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/Port.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/ReferenceNoDiffIdLayer.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/ReferenceNoDiffIdLayer.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/BadContainerConfigurationFormatException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/BadContainerConfigurationFormatException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/ReferenceLayer.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/ReferenceLayer.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/DockerHealthCheck$Builder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/DockerHealthCheck.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/BuildableManifestTemplate$ContentDescriptorTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/BuildableManifestTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate$HealthCheckObjectTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/BuildableManifestTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/BuildableManifestTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate$RootFilesystemObjectTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/DockerHealthCheck.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/DockerHealthCheck.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/V21ManifestTemplate$LayerObjectTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/V21ManifestTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/filesystem/UnixPathParser.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/filesystem/UnixPathParser.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/LayerCountMismatchException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/LayerCountMismatchException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/V21ManifestTemplate$HistoryObjectTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/V21ManifestTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/Image$Builder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/Image.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate$ConfigurationObjectTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/V21ManifestTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/V21ManifestTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/Image.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/Image.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/blob/BlobDescriptor.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/blob/BlobDescriptor.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/json/JsonTemplateMapper.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/json/JsonTemplateMapper.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/DigestOnlyLayer.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/DigestOnlyLayer.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/credentials/json/DockerConfigTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/credentials/json/DockerConfigTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/credentials/json/DockerConfigTemplate$AuthTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/credentials/json/DockerConfigTemplate.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/Image$Builder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/Image.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/Image$1.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/Image.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/HistoryEntry.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/HistoryEntry.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/DockerHealthCheck.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/DockerHealthCheck.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/Image.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/Image.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/Layer.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/Layer.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/JibContainer.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/JibContainer.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/DescriptorDigest.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/DescriptorDigest.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/ImageToJsonTranslator.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/ImageToJsonTranslator.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/DockerHealthCheck.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/DockerHealthCheck.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/json/JsonTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/json/JsonTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/Port.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/Port.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/BuildableManifestTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/BuildableManifestTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate$HealthCheckObjectTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/blob/BlobDescriptor.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/blob/BlobDescriptor.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate$RootFilesystemObjectTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate$ConfigurationObjectTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/Image.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/Image.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/Layer.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/Layer.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/HistoryEntry$Builder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/HistoryEntry.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/HistoryEntry.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/HistoryEntry.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/HistoryEntry$1.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/HistoryEntry.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/DockerHealthCheck$Builder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/DockerHealthCheck.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/DockerHealthCheck$1.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/DockerHealthCheck.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/DockerHealthCheck.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/DockerHealthCheck.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/cache/CachedLayer$Builder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/cache/CachedLayer.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/DescriptorDigest.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/DescriptorDigest.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/cache/CachedLayer.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/cache/CachedLayer.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/blob/Blob.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/blob/Blob.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/blob/BlobDescriptor.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/blob/BlobDescriptor.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/cache/CachedLayer$1.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/cache/CachedLayer.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/LayerEntry.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/LayerEntry.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/AbsoluteUnixPath.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/AbsoluteUnixPath.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/FilePermissions.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/FilePermissions.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/ImageConfiguration.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/ImageConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/ImageConfiguration$1.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/ImageConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/ImageReference.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/ImageReference.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/ImageConfiguration$Builder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/ImageConfiguration.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/ManifestPuller.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/ManifestPuller.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/RegistryException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/RegistryException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/UnknownManifestFormatException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/UnknownManifestFormatException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryEndpointRequestProperties.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryEndpointRequestProperties.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/BlobHttpContent.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/BlobHttpContent.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/ManifestTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/ManifestTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/Response.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/Response.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/json/JsonTemplateMapper.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/json/JsonTemplateMapper.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/BlobPusher$Initializer.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/BlobPusher.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/RegistryException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/RegistryException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryEndpointRequestProperties.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryEndpointRequestProperties.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/BlobPusher$1.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/BlobPusher.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/BlobHttpContent.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/BlobHttpContent.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/BlobPusher.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/BlobPusher.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryErrorExceptionBuilder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryErrorExceptionBuilder.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/Response.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/Response.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryErrorException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryErrorException.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/BlobPuller.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/BlobPuller.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/RegistryException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/RegistryException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/NotifyingOutputStream.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/NotifyingOutputStream.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/UnexpectedBlobDigestException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/UnexpectedBlobDigestException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryEndpointRequestProperties.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryEndpointRequestProperties.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/BlobHttpContent.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/BlobHttpContent.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/hash/WritableContents.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/hash/WritableContents.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/DescriptorDigest.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/DescriptorDigest.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/hash/CountingDigestOutputStream.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/hash/CountingDigestOutputStream.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/blob/BlobDescriptor.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/blob/BlobDescriptor.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/hash/Digests.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/hash/Digests.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/Response.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/Response.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/filesystem/UnixPathParser.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/filesystem/UnixPathParser.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/hash/Digests.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/hash/Digests.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/json/JsonTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/json/JsonTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/hash/WritableContents.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/hash/WritableContents.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/DescriptorDigest.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/DescriptorDigest.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/hash/CountingDigestOutputStream.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/hash/CountingDigestOutputStream.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/blob/BlobDescriptor.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/blob/BlobDescriptor.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/json/JsonTemplateMapper.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/json/JsonTemplateMapper.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/MainClassFinder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/MainClassFinder.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/MainClassFinder$MainClassVisitor.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/MainClassFinder.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/LogEvent.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/LogEvent.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/MainClassFinder$Result.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/MainClassFinder.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/FilePermissions.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/FilePermissions.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/ContainerConfiguration.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/ContainerConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/AbsoluteUnixPath.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/AbsoluteUnixPath.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/ContainerConfiguration$Builder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/ContainerConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/ContainerConfiguration$1.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/ContainerConfiguration.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/Authorization.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/Authorization.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/AbsoluteUnixPath.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/AbsoluteUnixPath.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/RelativeUnixPath.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/RelativeUnixPath.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/filesystem/UnixPathParser.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/filesystem/UnixPathParser.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/DockerHealthCheck.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/DockerHealthCheck.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/DockerHealthCheck$1.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/DockerHealthCheck.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/DockerHealthCheck$Builder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/DockerHealthCheck.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/Connection.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/Connection.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/Request.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/Request.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/Response.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/Response.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/Ports.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/Ports.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/Port.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/Port.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/filesystem/UserCacheHome.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/filesystem/UserCacheHome.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/ImageReference.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/ImageReference.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryAliasGroup.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryAliasGroup.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/InvalidImageReferenceException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/InvalidImageReferenceException.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/filesystem/FileOperations.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/filesystem/FileOperations.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/filesystem/DirectoryWalker.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/filesystem/DirectoryWalker.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/filesystem/PathConsumer.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/filesystem/PathConsumer.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/JavaContainerBuilder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/JavaContainerBuilder.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/RegistryImage.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/RegistryImage.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/AbsoluteUnixPath.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/AbsoluteUnixPath.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/ContainerConfiguration.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/ContainerConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/Jib.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/Jib.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/InvalidImageReferenceException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/InvalidImageReferenceException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryAliasGroup.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryAliasGroup.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/ImageConfiguration.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/ImageConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/filesystem/PathConsumer.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/filesystem/PathConsumer.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/LayerEntry.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/LayerEntry.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/filesystem/DirectoryWalker.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/filesystem/DirectoryWalker.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/JibContainerBuilder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/JibContainerBuilder.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/filesystem/UnixPathParser.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/filesystem/UnixPathParser.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/JavaContainerBuilder$PathPredicatePair.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/JavaContainerBuilder.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/ContainerConfiguration$Builder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/ContainerConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/ImageReference.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/ImageReference.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/JavaContainerBuilder$LayerType.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/JavaContainerBuilder.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/RelativeUnixPath.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/RelativeUnixPath.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/BuildConfiguration$Builder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/BuildConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/LayerConfiguration$Builder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/LayerConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/BuildConfiguration.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/BuildConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/ImageConfiguration$Builder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/ImageConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/LayerConfiguration.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/LayerConfiguration.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/RelativeUnixPath.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/RelativeUnixPath.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/filesystem/UnixPathParser.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/filesystem/UnixPathParser.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/docker/DockerClient.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/docker/DockerClient.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/docker/ImageTarball.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/docker/ImageTarball.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/tar/TarStreamBuilder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/tar/TarStreamBuilder.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/ImageToJsonTranslator.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/ImageToJsonTranslator.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/docker/json/DockerLoadManifestEntryTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/docker/json/DockerLoadManifestEntryTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/DescriptorDigest.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/DescriptorDigest.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate$HealthCheckObjectTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/blob/WritableContentsBlob.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/blob/WritableContentsBlob.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate$RootFilesystemObjectTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/DockerHealthCheck.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/DockerHealthCheck.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/Layer.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/Layer.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/ImageReference.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/ImageReference.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate$ConfigurationObjectTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/Image.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/Image.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/blob/Blob.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/blob/Blob.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/blob/BlobDescriptor.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/blob/BlobDescriptor.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/blob/Blobs.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/blob/Blobs.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/json/JsonTemplateMapper.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/json/JsonTemplateMapper.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/Request$Builder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/Request.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/Authorization.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/Authorization.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/Request.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/Request.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/BuildConfiguration$Builder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/BuildConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/ContainerConfiguration.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/ContainerConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/cache/CacheStorageFiles.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/cache/CacheStorageFiles.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/cache/CacheStorageWriter.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/cache/CacheStorageWriter.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/ImageReference.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/ImageReference.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/cache/Cache.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/cache/Cache.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/LogEvent.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/LogEvent.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/ImageFormat.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/ImageFormat.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/ImageConfiguration.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/ImageConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/BuildConfiguration$1.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/BuildConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/BuildConfiguration.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/BuildConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/event/EventHandlers.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/event/EventHandlers.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/cache/CacheStorageReader.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/cache/CacheStorageReader.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryErrorExceptionBuilder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryErrorExceptionBuilder.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/json/ErrorEntryTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/json/ErrorEntryTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/RegistryException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/RegistryException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/ErrorCodes.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/ErrorCodes.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryErrorException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryErrorException.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/cache/CachedLayer.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/cache/CachedLayer.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/cache/CachedLayer$Builder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/cache/CachedLayer.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/blob/BlobDescriptor.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/blob/BlobDescriptor.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/blob/Blob.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/blob/Blob.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/cache/CachedLayer$1.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/cache/CachedLayer.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/DescriptorDigest.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/DescriptorDigest.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/builder/steps/BuildResult.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/builder/steps/BuildResult.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/blob/BlobDescriptor.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/blob/BlobDescriptor.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/ImageToJsonTranslator.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/ImageToJsonTranslator.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/hash/WritableContents.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/hash/WritableContents.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate$HealthCheckObjectTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/hash/CountingDigestOutputStream.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/hash/CountingDigestOutputStream.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate$RootFilesystemObjectTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/BuildableManifestTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/BuildableManifestTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/DescriptorDigest.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/DescriptorDigest.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/hash/Digests.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/hash/Digests.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/DockerHealthCheck.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/DockerHealthCheck.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate$ConfigurationObjectTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/Image.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/Image.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/Layer.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/Layer.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/MainClassFinder$MainClassVisitor.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/MainClassFinder.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/MainClassFinder$1.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/MainClassFinder.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/Response.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/Response.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/LayerConfiguration.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/LayerConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/AbsoluteUnixPath.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/AbsoluteUnixPath.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/LayerConfiguration$Builder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/LayerConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/LayerConfiguration$1.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/LayerConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/FilePermissions.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/FilePermissions.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/LayerConfiguration$Builder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/LayerConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/AbsoluteUnixPath.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/AbsoluteUnixPath.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/LayerEntry.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/LayerEntry.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/LayerConfiguration$1.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/LayerConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/LayerConfiguration.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/LayerConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/FilePermissions.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/FilePermissions.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/RegistryImage.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/RegistryImage.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryAliasGroup.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryAliasGroup.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/CredentialRetriever.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/CredentialRetriever.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/InvalidImageReferenceException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/InvalidImageReferenceException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/Credential.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/Credential.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/ImageReference.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/ImageReference.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/Port.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/Port.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/cache/CacheStorageFiles.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/cache/CacheStorageFiles.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/cache/CacheCorruptedException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/cache/CacheCorruptedException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/ImageReference.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/ImageReference.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/DescriptorDigest.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/DescriptorDigest.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryAliasGroup.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryAliasGroup.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/LogEvent.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/LogEvent.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/LogEvent$Level.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/LogEvent.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/DockerDaemonImage.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/DockerDaemonImage.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryAliasGroup.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryAliasGroup.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/InvalidImageReferenceException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/InvalidImageReferenceException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/ImageReference.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/ImageReference.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/blob/BlobDescriptor.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/blob/BlobDescriptor.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/DescriptorDigest.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/DescriptorDigest.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryEndpointCaller.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryEndpointCaller.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryBrokenPipeException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryBrokenPipeException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/json/ErrorResponseTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/json/ErrorResponseTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/json/ErrorEntryTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/json/ErrorEntryTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/RegistryUnauthorizedException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/RegistryUnauthorizedException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/ErrorCodes.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/ErrorCodes.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/Authorization.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/Authorization.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/RegistryException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/RegistryException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/Connection.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/Connection.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/Request.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/Request.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryEndpointRequestProperties.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryEndpointRequestProperties.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/Request$Builder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/Request.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryErrorExceptionBuilder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryErrorExceptionBuilder.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/InsecureRegistryException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/InsecureRegistryException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/Response.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/Response.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/LogEvent.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/LogEvent.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryCredentialsNotSentException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryCredentialsNotSentException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryNoResponseException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryNoResponseException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryErrorException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryErrorException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/event/EventHandlers.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/event/EventHandlers.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/global/JibSystemProperties.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/global/JibSystemProperties.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryEndpointProvider.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryEndpointProvider.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/json/JsonTemplateMapper.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/json/JsonTemplateMapper.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/TarImage.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/TarImage.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryAliasGroup.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryAliasGroup.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/InvalidImageReferenceException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/InvalidImageReferenceException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/TarImage$1.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/TarImage.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/ImageReference.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/ImageReference.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/TarImage$Builder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/TarImage.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/ContainerConfiguration$Builder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/ContainerConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/AbsoluteUnixPath.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/AbsoluteUnixPath.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/Port.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/Port.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/ContainerConfiguration.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/ContainerConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/ContainerConfiguration$1.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/ContainerConfiguration.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/JibContainerBuilder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/JibContainerBuilder.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/AbsoluteUnixPath.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/AbsoluteUnixPath.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/ContainerConfiguration.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/ContainerConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/builder/Timer.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/builder/Timer.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/event/events/TimerEvent.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/event/events/TimerEvent.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/CacheDirectoryCreationException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/CacheDirectoryCreationException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/ImageFormat.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/ImageFormat.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/ImageConfiguration.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/ImageConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/JibContainer.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/JibContainer.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/filesystem/UnixPathParser.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/filesystem/UnixPathParser.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/builder/ProgressEventDispatcher.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/builder/ProgressEventDispatcher.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/builder/steps/StepsRunner$StepResults.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/builder/steps/StepsRunner.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/ContainerConfiguration$Builder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/ContainerConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/cache/CacheStorageWriter.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/cache/CacheStorageWriter.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/ImageReference.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/ImageReference.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/builder/steps/BuildResult.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/builder/steps/BuildResult.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/builder/steps/StepsRunner.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/builder/steps/StepsRunner.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/event/EventHandlers.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/event/EventHandlers.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/LayerConfiguration.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/LayerConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/cache/CacheStorageReader.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/cache/CacheStorageReader.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/RegistryImage.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/RegistryImage.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/Port.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/Port.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/cache/CacheStorageFiles.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/cache/CacheStorageFiles.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/LogEvent.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/LogEvent.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/cache/Cache.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/cache/Cache.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/LayerEntry.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/LayerEntry.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/event/progress/Allocation.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/event/progress/Allocation.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/builder/TimerEventDispatcher.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/builder/TimerEventDispatcher.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/event/events/ProgressEvent.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/event/events/ProgressEvent.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/Containerizer.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/Containerizer.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/BuildConfiguration$Builder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/BuildConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/LayerConfiguration$Builder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/LayerConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/BuildConfiguration.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/BuildConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/event/EventHandlers$Builder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/event/EventHandlers.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/ImageConfiguration$Builder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/ImageConfiguration.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/HistoryEntry.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/HistoryEntry.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/DescriptorDigest.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/DescriptorDigest.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate$HealthCheckObjectTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate$RootFilesystemObjectTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate$ConfigurationObjectTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/ContainerConfigurationTemplate.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryClient$Factory.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryClient.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/Authorization.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/Authorization.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryClient$1.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryClient.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryEndpointRequestProperties.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryEndpointRequestProperties.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryClient.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryClient.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/global/JibSystemProperties.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/global/JibSystemProperties.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/event/EventHandlers.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/event/EventHandlers.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/event/progress/Allocation.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/event/progress/Allocation.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/frontend/CredentialRetrieverFactory.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/frontend/CredentialRetrieverFactory.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/credentials/json/DockerConfigTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/credentials/json/DockerConfigTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/credentials/CredentialRetrievalException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/credentials/CredentialRetrievalException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/credentials/json/DockerConfigTemplate$AuthTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/credentials/json/DockerConfigTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryAliasGroup.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryAliasGroup.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/LogEvent.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/LogEvent.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/Credential.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/Credential.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/credentials/DockerConfig.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/credentials/DockerConfig.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/frontend/CredentialRetrieverFactory$DockerCredentialHelperFactory.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/frontend/CredentialRetrieverFactory.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/credentials/CredentialHelperUnhandledServerUrlException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/credentials/CredentialHelperUnhandledServerUrlException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/ImageReference.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/ImageReference.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/credentials/DockerCredentialHelper$DockerCredentialsTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/credentials/DockerCredentialHelper.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/credentials/DockerCredentialHelper.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/credentials/DockerCredentialHelper.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/CredentialRetriever.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/CredentialRetriever.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/credentials/CredentialHelperNotFoundException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/credentials/CredentialHelperNotFoundException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/credentials/DockerConfigCredentialRetriever.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/credentials/DockerConfigCredentialRetriever.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/json/JsonTemplateMapper.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/json/JsonTemplateMapper.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/BlobChecker.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/BlobChecker.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/RegistryException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/RegistryException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryEndpointRequestProperties.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryEndpointRequestProperties.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/BlobHttpContent.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/BlobHttpContent.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/json/ErrorResponseTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/json/ErrorResponseTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/json/ErrorEntryTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/json/ErrorEntryTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/DescriptorDigest.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/DescriptorDigest.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/ErrorCodes.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/ErrorCodes.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/blob/BlobDescriptor.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/blob/BlobDescriptor.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryErrorExceptionBuilder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryErrorExceptionBuilder.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/ErrorResponseUtil.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/ErrorResponseUtil.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/Response.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/Response.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/json/JsonTemplateMapper.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/json/JsonTemplateMapper.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryErrorException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryErrorException.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/cache/LayerEntriesSelector.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/cache/LayerEntriesSelector.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/AbsoluteUnixPath.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/AbsoluteUnixPath.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/hash/CountingDigestOutputStream.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/hash/CountingDigestOutputStream.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/hash/WritableContents.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/hash/WritableContents.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/FilePermissions.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/FilePermissions.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/blob/BlobDescriptor.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/blob/BlobDescriptor.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/DescriptorDigest.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/DescriptorDigest.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/LayerEntry.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/LayerEntry.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/cache/LayerEntriesSelector$LayerEntryTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/cache/LayerEntriesSelector.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/hash/Digests.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/hash/Digests.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryClient.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryClient.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/ManifestPuller.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/ManifestPuller.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryBrokenPipeException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryBrokenPipeException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/blob/Blob.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/blob/Blob.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/blob/WritableContentsBlob.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/blob/WritableContentsBlob.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/json/ErrorResponseTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/json/ErrorResponseTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/BlobPusher$Writer.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/BlobPusher.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/BuildableManifestTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/BuildableManifestTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/json/ErrorEntryTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/json/ErrorEntryTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/RegistryUnauthorizedException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/RegistryUnauthorizedException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryClient$TokenPayloadTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryClient.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/BlobPuller.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/BlobPuller.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/builder/Timer.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/builder/Timer.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/ErrorCodes.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/ErrorCodes.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/Authorization.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/Authorization.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/RegistryException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/RegistryException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/Connection.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/Connection.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/ManifestPusher.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/ManifestPusher.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/Request.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/Request.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryEndpointRequestProperties.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryEndpointRequestProperties.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryClient$1.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryClient.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/Request$Builder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/Request.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryErrorExceptionBuilder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryErrorExceptionBuilder.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/InsecureRegistryException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/InsecureRegistryException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/Response.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/Response.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/AuthenticationMethodRetriever.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/AuthenticationMethodRetriever.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/event/events/TimerEvent.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/event/events/TimerEvent.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/LogEvent.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/LogEvent.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/BlobPusher.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/BlobPusher.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/BlobChecker.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/BlobChecker.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryEndpointCaller.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryEndpointCaller.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/BlobPusher$Committer.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/BlobPusher.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryCredentialsNotSentException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryCredentialsNotSentException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryNoResponseException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryNoResponseException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryErrorException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryErrorException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/builder/TimerEventDispatcher.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/builder/TimerEventDispatcher.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/event/EventHandlers.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/event/EventHandlers.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/global/JibSystemProperties.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/global/JibSystemProperties.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/DescriptorDigest.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/DescriptorDigest.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryClient$AccessClaim.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryClient.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryEndpointProvider.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryEndpointProvider.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/json/JsonTemplateMapper.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/json/JsonTemplateMapper.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/ManifestTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/ManifestTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/blob/Blobs.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/blob/Blobs.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryClient$Factory.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryClient.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/BlobPusher$Initializer.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/BlobPusher.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/cache/LayerEntriesSelector$LayerEntryTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/cache/LayerEntriesSelector.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/LayerEntry.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/LayerEntry.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/AbsoluteUnixPath.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/AbsoluteUnixPath.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/FilePermissions.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/FilePermissions.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/global/JibSystemProperties.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/global/JibSystemProperties.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/ManifestPusher.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/ManifestPusher.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/LogEvent.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/LogEvent.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/json/ErrorResponseTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/json/ErrorResponseTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/hash/WritableContents.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/hash/WritableContents.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/json/ErrorEntryTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/json/ErrorEntryTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/DescriptorDigest.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/DescriptorDigest.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/hash/CountingDigestOutputStream.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/hash/CountingDigestOutputStream.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/BuildableManifestTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/BuildableManifestTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/hash/Digests.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/hash/Digests.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/blob/JsonBlob.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/blob/JsonBlob.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/ErrorCodes.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/ErrorCodes.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryErrorException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryErrorException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/RegistryException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/RegistryException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/Response.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/Response.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryEndpointRequestProperties.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryEndpointRequestProperties.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/BlobHttpContent.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/BlobHttpContent.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryErrorExceptionBuilder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryErrorExceptionBuilder.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/blob/BlobDescriptor.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/blob/BlobDescriptor.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/ErrorResponseUtil.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/ErrorResponseUtil.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/event/EventHandlers.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/event/EventHandlers.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/blob/Blobs.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/blob/Blobs.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/json/JsonTemplateMapper.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/json/JsonTemplateMapper.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/DescriptorDigest.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/DescriptorDigest.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/AuthenticationMethodRetriever.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/AuthenticationMethodRetriever.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryAuthenticator.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryAuthenticator.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryEndpointRequestProperties.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryEndpointRequestProperties.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/BlobHttpContent.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/BlobHttpContent.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryErrorExceptionBuilder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryErrorExceptionBuilder.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/RegistryException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/RegistryException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/RegistryAuthenticationFailedException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/RegistryAuthenticationFailedException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/Response.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/Response.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryErrorException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryErrorException.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/Containerizer.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/Containerizer.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/RegistryImage.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/RegistryImage.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/event/Handler.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/event/Handler.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/docker/DockerClient.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/docker/DockerClient.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/CacheDirectoryCreationException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/CacheDirectoryCreationException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/DockerDaemonImage.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/DockerDaemonImage.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/ImageConfiguration.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/ImageConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/TarImage.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/TarImage.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/builder/ProgressEventDispatcher.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/builder/ProgressEventDispatcher.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/event/progress/Allocation.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/event/progress/Allocation.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/builder/steps/StepsRunner$StepResults.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/builder/steps/StepsRunner.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/filesystem/UserCacheHome.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/filesystem/UserCacheHome.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/global/JibSystemProperties.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/global/JibSystemProperties.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/ImageReference.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/ImageReference.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/event/events/ProgressEvent.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/event/events/ProgressEvent.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/builder/steps/BuildResult.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/builder/steps/BuildResult.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/BuildConfiguration.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/BuildConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/builder/steps/StepsRunner.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/builder/steps/StepsRunner.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/event/EventHandlers.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/event/EventHandlers.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/ImageConfiguration$Builder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/ImageConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/event/EventHandlers$Builder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/event/EventHandlers.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/builder/steps/RetrieveRegistryCredentialsStep.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/builder/steps/RetrieveRegistryCredentialsStep.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/builder/Timer.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/builder/Timer.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/ImageReference.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/ImageReference.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/builder/ProgressEventDispatcher$Factory.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/builder/ProgressEventDispatcher.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/LogEvent.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/LogEvent.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/builder/TimerEventDispatcher.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/builder/TimerEventDispatcher.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/ImageConfiguration.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/ImageConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/CredentialRetriever.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/CredentialRetriever.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/event/events/TimerEvent.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/event/events/TimerEvent.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/BuildConfiguration.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/BuildConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/event/EventHandlers.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/event/EventHandlers.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/HistoryEntry.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/HistoryEntry.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/HistoryEntry$Builder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/HistoryEntry.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/json/HistoryEntry$1.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/json/HistoryEntry.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/json/JsonTemplateMapper.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/json/JsonTemplateMapper.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/json/JsonTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/json/JsonTemplate.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/BuildConfiguration.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/BuildConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryEndpointRequestProperties.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryEndpointRequestProperties.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/ContainerConfiguration.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/ContainerConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryClient.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryClient.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/ImageReference.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/ImageReference.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/cache/Cache.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/cache/Cache.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/ImageConfiguration.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/ImageConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/BuildConfiguration$Builder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/BuildConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/BuildConfiguration$1.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/BuildConfiguration.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/event/EventHandlers.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/event/EventHandlers.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryClient$Factory.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryClient.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/Credential.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/Credential.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/ErrorResponseUtil.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/ErrorResponseUtil.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/json/ErrorResponseTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/json/ErrorResponseTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/json/ErrorEntryTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/json/ErrorEntryTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/ErrorCodes.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/ErrorCodes.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/json/JsonTemplateMapper.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/json/JsonTemplateMapper.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/blob/Blobs.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/blob/Blobs.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/hash/WritableContents.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/hash/WritableContents.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/blob/FileBlob.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/blob/FileBlob.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/json/JsonTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/json/JsonTemplate.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/blob/StringBlob.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/blob/StringBlob.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/blob/WritableContentsBlob.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/blob/WritableContentsBlob.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/blob/Blob.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/blob/Blob.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/blob/JsonBlob.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/blob/JsonBlob.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/blob/InputStreamBlob.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/blob/InputStreamBlob.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryAuthenticator.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryAuthenticator.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/blob/StringBlob.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/blob/StringBlob.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/Credential.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/Credential.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/RegistryAuthenticationFailedException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/RegistryAuthenticationFailedException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/Authorization.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/Authorization.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/RegistryException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/RegistryException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/Connection.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/Connection.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/Request.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/Request.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/global/JibSystemProperties.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/global/JibSystemProperties.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryEndpointRequestProperties.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryEndpointRequestProperties.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/registry/RegistryAuthenticator$AuthenticationResponseTemplate.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/registry/RegistryAuthenticator.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/BlobHttpContent.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/BlobHttpContent.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/Request$Builder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/Request.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/http/Response.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/http/Response.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/blob/Blobs.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/blob/Blobs.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/json/JsonTemplateMapper.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/json/JsonTemplateMapper.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/Image.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/Image.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/Image$1.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/Image.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/configuration/DockerHealthCheck.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/configuration/DockerHealthCheck.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/image/Image$Builder.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/image/Image.java
+ - target:
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/RegistryUnauthorizedException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/RegistryUnauthorizedException.java
+   - dir: jib-core/build/classes/java/main
+     file: com/google/cloud/tools/jib/api/RegistryException.class
+     sourceDir: src/main/java
+     sourceFile: com/google/cloud/tools/jib/api/RegistryException.java
