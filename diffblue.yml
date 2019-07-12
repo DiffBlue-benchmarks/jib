@@ -175,15 +175,15 @@ phases:
       cover-only: file
 units:
  - target:
-   - dir: build/classes/java/main
+   - dir: jib-core/build/classes/java/main
      file: com/google/cloud/tools/jib/api/ImageReference.class
      sourceDir: src/main/java
      sourceFile: com/google/cloud/tools/jib/api/ImageReference.java
-   - dir: build/classes/java/main
+   - dir: jib-core/build/classes/java/main
      file: com/google/cloud/tools/jib/api/InvalidImageReferenceException.class
      sourceDir: src/main/java
      sourceFile: com/google/cloud/tools/jib/api/InvalidImageReferenceException.java
-   - dir: build/classes/java/main
+   - dir: jib-core/build/classes/java/main
      file: com/google/cloud/tools/jib/registry/RegistryAliasGroup.class
      sourceDir: src/main/java
      sourceFile: com/google/cloud/tools/jib/registry/RegistryAliasGroup.java
